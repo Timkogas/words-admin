@@ -125,7 +125,7 @@ const Main: FC = () => {
     } else {
       await axiosInstance.post('/addLevel', data)
     }
-    setLevelData((prevValue) => {
+    setLevelData(() => {
       return {
         level: 0,
         words: [],

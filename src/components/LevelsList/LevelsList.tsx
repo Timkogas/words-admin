@@ -27,7 +27,7 @@ const LevelsList: FC<IAddFormProps> = ({ levels, deleteLevel, turnOnEditMode }) 
         Уровни
       </Typography>
       <List sx={{ width: '100%', overflowY: 'scroll', height: '80vh', border: '3px solid black', borderRadius: '5px', padding: '15px' }}>
-        {levels.map((level, i) => {
+        {levels.map((level) => {
           const data = JSON.parse(level.data)
           const words = data.words.map((word: string) => word.toLowerCase())
           const letters = data.letters.map((letter: string) => letter.toUpperCase())
