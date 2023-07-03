@@ -20,7 +20,7 @@ interface IAddFormProps {
   setCurrentLetter: React.Dispatch<React.SetStateAction<string>>
 }
 
-const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement, levelData, deleteElement, postLevel, turnOffEditMode, editMode, currentLetter, setCurrentLetter }) => {
+const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement, levelData, deleteElement, postLevel, turnOffEditMode, editMode, setCurrentLetter }) => {
 
   const checkEditMode = editMode > -1
   const dragStart = (letter: string) => {

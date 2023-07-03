@@ -50,7 +50,7 @@ const Main: FC = () => {
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     const arr: (number[])[] = []
     for (let i = 0; i < size.vertical; i++) {
       const row: number[] = []
@@ -60,12 +60,11 @@ const Main: FC = () => {
       }
     }
     setGrid([...arr])
-  },[size.vertical, size.horizontal])
+  }, [size.vertical, size.horizontal])
 
 
   const onChangeSize = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target
-    const arr: (number[])[] = []
     if (Number(value) < 0) return
     if (Number(value) < 13) {
       setSize((prevValue) => {
@@ -152,7 +151,12 @@ const Main: FC = () => {
     const letters = levelData.letters.map((el) => {
       return el.letter
     })
-    const data = { data: JSON.stringify({ level: levelData.level, words: words, letters: letters, config: grid }) }
+    let data
+    if (grid.length > 0) {
+      data = { data: JSON.stringify({ level: levelData.level, words: words, letters: letters, config: grid }) }
+    } else {
+      data = { data: JSON.stringify({ level: levelData.level, words: words, letters: letters }) }
+    }
     if (editMode > -1) {
       await axiosInstance.post('/editLevel', { ...data, id: editMode })
       setEditMode(-1)
@@ -167,6 +171,7 @@ const Main: FC = () => {
       }
     })
     setGrid([])
+    setSize({vertical: 0, horizontal: 0})
     fetchLevels()
   }
 
@@ -180,7 +185,7 @@ const Main: FC = () => {
     setEditMode(id)
     const findElement = levels.find(el => el.id === id) as IlevelResponse
     const data = JSON.parse(findElement?.data)
-    console.log(data)
+    
     setLevelData(
       {
         level: data.level,
@@ -188,7 +193,10 @@ const Main: FC = () => {
         letters: data.letters.map((el: string) => { return { id: id++, letter: el } })
       }
     )
-    setGrid(data.config)
+    if (data.config) {
+      setGrid(data.config)
+    }
+
   }
 
   const turnOffEditMode = (): void => {
@@ -201,6 +209,7 @@ const Main: FC = () => {
       }
     )
     setGrid([])
+    setSize({vertical: 0, horizontal: 0})
   }
 
 
