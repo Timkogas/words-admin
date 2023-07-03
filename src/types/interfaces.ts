@@ -19,6 +19,7 @@ interface IlevelData {
   level: number
   words: Iword[]
   letters: Iletter[]
+  config?: ((number|string)[])[]
 }
 
 interface IlevelResponse{

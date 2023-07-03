@@ -17,7 +17,7 @@ interface IAddFormProps {
 
 const LevelsList: FC<IAddFormProps> = ({ levels, deleteLevel, turnOnEditMode }) => {
   return (
-    <Box sx={{ minWidth: '720px' }}>
+    <Box sx={{ flexBasis: '33%' }}>
       <Typography
         sx={{ display: 'inline' }}
         component="span"
@@ -55,6 +55,15 @@ const LevelsList: FC<IAddFormProps> = ({ levels, deleteLevel, turnOnEditMode }) 
                         color="text.primary"
                       >
                         Буквы: <b>{letters.join(', ')}</b>
+                      </Typography>
+                      <br />
+                      <Typography
+                        sx={{ display: 'inline', fontSize: '20px' }}
+                        component="span"
+                        variant="subtitle1"
+                        color="text.primary"
+                      >
+                        Сетка:  <b>{data?.config?.length > 0 ?  'есть' : 'нет'}</b>
                       </Typography>
                     </>
                   }

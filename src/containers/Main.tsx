@@ -5,6 +5,7 @@ import LevelsList from "../components/LevelsList/LevelsList";
 import AddForm from "../components/AddForm/AddForm";
 import { addType } from "../types/enums";
 import axiosInstance from "../axiosInstance";
+import Grid from "../components/Grid/Grid";
 
 let id = 0
 
@@ -13,7 +14,10 @@ const Main: FC = () => {
   const [addFormValue, setAddFormValue] = useState<IaddForm>({ level: 0, word: '', letter: '' });
   const [levelData, setLevelData] = useState<IlevelData>({ level: 0, words: [], letters: [] });
   const [levels, setLevels] = useState<IlevelResponse[]>([]);
+  const [size, setSize] = useState<{ horizontal: number, vertical: number }>({ horizontal: 0, vertical: 0 });
+  const [grid, setGrid] = useState<((number | string)[])[]>([]);
   const [editMode, setEditMode] = useState<number>(-1)
+  const [currentLetter, setCurrentLetter] = useState<string>('')
 
   const fetchLevels = async () => {
     const res = await axiosInstance.get('/getLevels')
@@ -23,6 +27,8 @@ const Main: FC = () => {
   useEffect(() => {
     fetchLevels()
   }, [])
+
+  console.log(levels)
 
   const onChangeAddForm = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target
@@ -40,6 +46,34 @@ const Main: FC = () => {
       }
       setAddFormValue((prevValue) => {
         return { ...prevValue, [name]: value }
+      })
+    }
+  }
+
+  useEffect(()=>{
+    const arr: (number[])[] = []
+    for (let i = 0; i < size.vertical; i++) {
+      const row: number[] = []
+      arr.push(row)
+      for (let j = 0; j < size.horizontal; j++) {
+        row.push(0);
+      }
+    }
+    setGrid([...arr])
+  },[size.vertical, size.horizontal])
+
+
+  const onChangeSize = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = event.target
+    const arr: (number[])[] = []
+    if (Number(value) < 0) return
+    if (Number(value) < 13) {
+      setSize((prevValue) => {
+        return { ...prevValue, [name]: Number(value) }
+      })
+    } else {
+      setSize((prevValue) => {
+        return { ...prevValue, [name]: 12 }
       })
     }
   }
@@ -118,9 +152,9 @@ const Main: FC = () => {
     const letters = levelData.letters.map((el) => {
       return el.letter
     })
-    const data = { data: JSON.stringify({ level: levelData.level, words: words, letters: letters }) }
+    const data = { data: JSON.stringify({ level: levelData.level, words: words, letters: letters, config: grid }) }
     if (editMode > -1) {
-      await axiosInstance.post('/editLevel', {...data, id: editMode})
+      await axiosInstance.post('/editLevel', { ...data, id: editMode })
       setEditMode(-1)
     } else {
       await axiosInstance.post('/addLevel', data)
@@ -132,6 +166,7 @@ const Main: FC = () => {
         letters: [],
       }
     })
+    setGrid([])
     fetchLevels()
   }
 
@@ -145,6 +180,7 @@ const Main: FC = () => {
     setEditMode(id)
     const findElement = levels.find(el => el.id === id) as IlevelResponse
     const data = JSON.parse(findElement?.data)
+    console.log(data)
     setLevelData(
       {
         level: data.level,
@@ -152,6 +188,7 @@ const Main: FC = () => {
         letters: data.letters.map((el: string) => { return { id: id++, letter: el } })
       }
     )
+    setGrid(data.config)
   }
 
   const turnOffEditMode = (): void => {
@@ -163,7 +200,10 @@ const Main: FC = () => {
         letters: []
       }
     )
+    setGrid([])
   }
+
+
 
   return (
     <>
@@ -179,6 +219,16 @@ const Main: FC = () => {
           postLevel={postLevel}
           editMode={editMode}
           turnOffEditMode={turnOffEditMode}
+          setCurrentLetter={setCurrentLetter}
+          currentLetter={currentLetter}
+        />
+        <Grid
+          size={size}
+          onChangeSize={onChangeSize}
+          grid={grid}
+          setCurrentLetter={setCurrentLetter}
+          currentLetter={currentLetter}
+          setGrid={setGrid}
         />
       </Container>
     </>

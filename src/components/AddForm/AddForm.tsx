@@ -14,14 +14,21 @@ interface IAddFormProps {
   deleteElement: (type: addType, id: number) => void
   levelData: IlevelData
   postLevel: () => Promise<void>
-  turnOffEditMode: ()=>void
+  turnOffEditMode: () => void
   editMode: number
+  currentLetter: string
+  setCurrentLetter: React.Dispatch<React.SetStateAction<string>>
 }
 
-const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement, levelData, deleteElement, postLevel, turnOffEditMode, editMode }) => {
+const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement, levelData, deleteElement, postLevel, turnOffEditMode, editMode, currentLetter, setCurrentLetter }) => {
+
   const checkEditMode = editMode > -1
+  const dragStart = (letter: string) => {
+    setCurrentLetter(letter)
+  }
+
   return (
-    <Box>
+    <Box sx={{ flexBasis: '25%' }}>
       <Typography
         sx={{ display: 'inline' }}
         component="span"
@@ -47,7 +54,7 @@ const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement,
         </Box>
 
 
-        <List sx={{ marginBottom: '80px' }}>
+        <List sx={{ marginBottom: '30px' }}>
           {levelData.level ? <Box
             key={levelData.level}
             sx={{ border: '1px solid black', borderRadius: '15px', padding: '5px', display: 'flex', alignItems: 'center', width: '100px', justifyContent: 'space-between' }}
@@ -80,7 +87,7 @@ const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement,
           </Button>
         </Box>
 
-        <List sx={{ marginBottom: '80px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+        <List sx={{ marginBottom: '30px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
           {levelData.words.length > 0 ?
             levelData.words.map((word) => {
               return (<Box
@@ -116,10 +123,12 @@ const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement,
           </Button>
         </Box>
 
-        <List sx={{ marginBottom: '80px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+        <List sx={{ marginBottom: '30px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
           {levelData.letters.length > 0 ?
             levelData.letters.map((letter) => {
               return (<Box
+                draggable={true}
+                onDragStart={() => { dragStart(letter.letter) }}
                 sx={{ border: '1px solid black', borderRadius: '15px', padding: '10px', display: 'flex', alignItems: 'center', width: '70px', justifyContent: 'space-between' }}
                 key={letter.id}
               >
@@ -143,7 +152,7 @@ const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement,
       <Button
         variant="contained"
         color="success"
-        sx={{ padding: '20px', fontSize: '25px' }}
+        sx={{ padding: '10px', fontSize: '18px' }}
         disabled={!levelData.level || levelData.letters.length === 0 || levelData.words.length === 0}
         onClick={postLevel}
       >
@@ -152,7 +161,7 @@ const AddForm: FC<IAddFormProps> = ({ addFormValue, onChangeAddForm, addElement,
       {checkEditMode ? <Button
         variant="contained"
         color="secondary"
-        sx={{ padding: '20px', fontSize: '25px', marginLeft: '30px' }}
+        sx={{ padding: '10px', fontSize: '18px', marginLeft: '20px' }}
         disabled={!levelData.level || levelData.letters.length === 0 || levelData.words.length === 0}
         onClick={turnOffEditMode}
       >
